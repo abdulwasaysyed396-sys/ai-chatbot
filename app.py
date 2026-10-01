@@ -1,6 +1,7 @@
 import os
 
 import gradio as gr
+import spaces
 from dotenv import load_dotenv
 from huggingface_hub import InferenceClient
 
@@ -19,6 +20,12 @@ if not hf_token:
 client = InferenceClient(
     api_key=hf_token
 )
+
+
+# ZeroGPU compatibility function
+@spaces.GPU
+def check_gpu():
+    return None
 
 
 def chat_with_ai(message, history, instructions):
@@ -40,7 +47,7 @@ def chat_with_ai(message, history, instructions):
                 "content": item["content"]
             })
 
-    # Add the current user message
+    # Add current user message
     messages.append({
         "role": "user",
         "content": message
@@ -66,7 +73,10 @@ demo = gr.ChatInterface(
     additional_inputs=[
         gr.Textbox(
             label="Custom Instructions",
-            value="You are a helpful AI assistant. Explain things clearly and simply for beginners."
+            value=(
+                "You are a helpful AI assistant. "
+                "Explain things clearly and simply for beginners."
+            )
         )
     ],
     title="🤖 My AI Chatbot",
